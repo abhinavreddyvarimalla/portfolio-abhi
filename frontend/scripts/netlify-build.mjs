@@ -13,7 +13,7 @@ const result=spawnSync('npm',['run','build'],{stdio:'inherit',env:{...process.en
 if(result.error)throw result.error;
 if(result.status!==0)process.exit(result.status??1);
 const rules=[];
-if(origin)rules.push(`/api/products/* ${origin}/api/products/:splat 200!`, `/api/products ${origin}/api/products 200!`);
+if(origin)rules.push(`/api/products ${origin}/api/products 200!`, `/api/products/* ${origin}/api/products/:splat 200!`);
 rules.push('/* /index.html 200');
 writeFileSync('dist/_redirects',rules.join('\n')+'\n');
 console.log(origin?'Product API proxy configured.':'Frontend-only deployment: API playground hidden until API_ORIGIN is configured.');
