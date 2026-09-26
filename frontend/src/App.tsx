@@ -8,5 +8,5 @@ import Modal from './components/Modal';
 export default function App(){
 const [panel,setPanel]=useState<Panel|null>(null);
 useEffect(()=>{const key=(e:KeyboardEvent)=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();setPanel(p=>p?null:'commands');}};document.addEventListener('keydown',key);return()=>document.removeEventListener('keydown',key);},[]);
-return <><a className="skip-link" href="#main">Skip to content</a><Header onOpen={setPanel}/><main id="main"><Hero onOpen={setPanel}/><Toolkit/><EngineeringFocus onOpen={setPanel}/><Projects onOpen={setPanel}/><AiPlayground/><Playground/><Experience/><About onOpen={setPanel}/><Contact onOpen={setPanel}/></main><Footer/>{panel&&<Modal panel={panel} onClose={()=>setPanel(null)}/>}</>;
+return <><a className="skip-link" href="#main">Skip to content</a><Header onOpen={setPanel}/><main id="main"><Hero onOpen={setPanel}/><Toolkit/><EngineeringFocus onOpen={setPanel}/><Projects onOpen={setPanel}/><AiPlayground/>{(import.meta.env.VITE_PUBLIC_SITE !== 'true' || import.meta.env.VITE_API_CONNECTED === 'true') && <Playground/>}<Experience/><About onOpen={setPanel}/><Contact onOpen={setPanel}/></main><Footer/>{panel&&<Modal panel={panel} onClose={()=>setPanel(null)}/>}</>;
 }
