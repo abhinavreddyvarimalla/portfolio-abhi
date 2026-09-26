@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-portfolio_local}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - portfolio-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  api:
+    build: ./backend
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      DB_URL: jdbc:postgresql://db:5432/portfolio
+      DB_USER: portfolio
+      DB_PASSWORD: ${DB_PASSWORD:-portfolio_local}
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+  ai:
+    profiles: [ai]
+    build: ./ai-service
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2:3b}
+    ports:
+      - "127.0.0.1:8001:8001"
+    depends_on:
+      - ollama
+  ollama:
+    profiles: [ai]
+    image: ollama/ollama:latest
+    volumes:
+      - portfolio-models:/root/.ollama
+volumes:
+  portfolio-models:
+  portfolio-data:
